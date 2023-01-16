@@ -54,11 +54,21 @@ type Response struct {
 	Result string `bson:"result,omitempty"`
 }
 
+type Error struct {
+	Status  string `json:"status,omitempty"`
+	Message string `json:"message,omitempty"`
+	Result  string `json:"result,omitempty"`
+}
+
 func New(apikey string) Client {
 	return Client{
 		apiKey:    apikey,
-		rateLimit: ratelimit.New(5),
+		rateLimit: ratelimit.New(4, ratelimit.WithoutSlack),
 	}
+}
+
+func (err *Error) Error() string {
+	return err.Result
 }
 
 func (c *Client) GetLatestBlock() (int64, error) {
@@ -141,6 +151,15 @@ func (c *Client) GetTransaction(hash string) (Transaction, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return Transaction{}, err
+	}
+
+	if resp.StatusCode != 200 {
+		var respErr Error
+		err := json.Unmarshal(body, &respErr)
+		if err != nil {
+			return Transaction{}, err
+		}
+		return Transaction{}, &respErr
 	}
 
 	var t transaction

@@ -55,5 +55,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	log.Info().Str("addr", addr).Msg("start server")
 	transactionapi.RegisterTransactionServiceServer(grpcServer, server.New(mongo))
-	grpcServer.Serve(lis)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatal().Err(err).Msg("server failed")
+	}
 }
