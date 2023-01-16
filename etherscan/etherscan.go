@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"go.uber.org/ratelimit"
 )
 
@@ -85,6 +86,15 @@ func (c *Client) GetLatestBlock() (int64, error) {
 		return 0, err
 	}
 
+	if resp.StatusCode != 200 {
+		var respErr Error
+		err := json.Unmarshal(body, &respErr)
+		if err != nil {
+			return 0, err
+		}
+		return 0, &respErr
+	}
+
 	var r Response
 	err = json.Unmarshal(body, &r)
 	if err != nil {
@@ -115,6 +125,15 @@ func (c *Client) GetBlock(blockNum int64) (Block, error) {
 		return Block{}, err
 	}
 
+	if resp.StatusCode != 200 {
+		var respErr Error
+		err := json.Unmarshal(body, &respErr)
+		if err != nil {
+			return Block{}, err
+		}
+		return Block{}, &respErr
+	}
+
 	var block block
 	err = json.Unmarshal(body, &block)
 	if err != nil {
@@ -130,6 +149,8 @@ func (b *block) toBlock() (Block, error) {
 	if err != nil {
 		return Block{}, err
 	}
+
+	log.Debug().Int64("block id", num).Msg("fetching and saving all transactions in the block")
 
 	return Block{
 		Number:       num,
@@ -167,6 +188,7 @@ func (c *Client) GetTransaction(hash string) (Transaction, error) {
 	if err != nil {
 		return Transaction{}, err
 	}
+	log.Debug().Str("transaction id:", t.Result.Hash)
 	return t.toTransaction()
 }
 
