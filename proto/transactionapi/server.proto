@@ -1,0 +1,36 @@
+syntax = "proto3";
+package transactionapi;
+
+option go_package = "transactionapi/transactionapi";
+
+message Transaction {
+  string id = 1;
+  string to = 2;
+  int64 block_id = 3;
+  string timestamp = 4;
+  string value = 5;
+  string gas = 6;
+}
+
+service TransactionService {
+  rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse) {}
+}
+
+message GetTransactionsRequest {
+  string id = 1;
+  string to = 2;
+  int64 block_id = 3;
+  string timestamp = 4;
+  string value = 5;
+  string gas = 6;
+  PageRequest page = 7;
+}
+
+message GetTransactionsResponse {
+  repeated Transaction transactions = 1;
+}
+
+message PageRequest {
+  int64 size = 2;
+  int64 num = 3;
+}

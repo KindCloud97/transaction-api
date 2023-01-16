@@ -1,0 +1,12 @@
+{
+  "details": {
+    "methodFqn": "transactionapi.TransactionService.GetTransactions"
+  },
+  "requests": [
+    {
+      "location": "GetTransactions-request.json"
+    }
+  ],
+  "operationType": "unary",
+  "invokerName": "grpc"
+}

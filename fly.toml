@@ -1,0 +1,25 @@
+# fly.toml file generated for transactionapi on 2023-01-16T15:49:36+02:00
+
+app = "transactionapi"
+
+[env]
+PORT = "8080"
+
+[[services]]
+internal_port = 8080
+protocol = "tcp"
+
+[services.concurrency]
+hard_limit = 250
+soft_limit = 200
+
+[[services.ports]]
+handlers = ["tls"]
+port = "443"
+
+[services.ports.tls_options]
+alpn = ["h2"]
+
+[[services.tcp_checks]]
+interval = 10000
+timeout = 2000
