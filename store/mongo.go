@@ -23,7 +23,7 @@ type Transaction struct {
 	Id        string `bson:"id,omitempty"`
 	From      string `bson:"from,omitempty"`
 	BlockId   int64  `bson:"block_id,omitempty"`
-	To        string `bson:"from,omitempty"`
+	To        string `bson:"to,omitempty"`
 	Timestamp string `bson:"timestamp,omitempty"`
 	Value     string `bson:"value,omitempty"`
 	Gas       string `bson:"gas,omitempty"`
