@@ -20,7 +20,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Err(err).Msg("load environment variable")
+		log.Trace().Err(err).Msg("load environment variable")
 	}
 	apiKey := os.Getenv("APIKEY")
 	username := os.Getenv("USERNAME")
