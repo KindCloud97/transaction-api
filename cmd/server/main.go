@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 
 	"github.com/KindCloud97/transactionapi/etherscan"
@@ -35,7 +36,7 @@ func main() {
 		log.Fatal().Err(err).Msg("error connect to mongoDB")
 	}
 
-	ethClient := etherscan.New(apiKey)
+	ethClient := etherscan.New(apiKey, http.DefaultClient)
 
 	u := updater.New(ethClient, mongo)
 

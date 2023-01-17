@@ -12,9 +12,15 @@ import (
 	"go.uber.org/ratelimit"
 )
 
+//go:generate mockery --name HttpGetter --with-expecter
+type HttpGetter interface {
+	Get(url string) (resp *http.Response, err error)
+}
+
 type Client struct {
-	apiKey    string
-	rateLimit ratelimit.Limiter
+	apiKey     string
+	rateLimit  ratelimit.Limiter
+	httpGetter HttpGetter
 }
 
 type block struct {
@@ -60,10 +66,11 @@ type Error struct {
 	Result  string `json:"result,omitempty"`
 }
 
-func New(apikey string) Client {
+func New(apikey string, httpGetter HttpGetter) Client {
 	return Client{
-		apiKey:    apikey,
-		rateLimit: ratelimit.New(4, ratelimit.WithoutSlack),
+		apiKey:     apikey,
+		rateLimit:  ratelimit.New(4, ratelimit.WithoutSlack),
+		httpGetter: httpGetter,
 	}
 }
 
@@ -74,7 +81,7 @@ func (err *Error) Error() string {
 func (c *Client) GetLatestBlock() (int64, error) {
 	c.rateLimit.Take()
 
-	resp, err := http.Get("https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=" + c.apiKey)
+	resp, err := c.httpGetter.Get("https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=" + c.apiKey)
 	if err != nil {
 		return 0, err
 	}
@@ -112,7 +119,7 @@ func (c *Client) GetLatestBlock() (int64, error) {
 func (c *Client) GetBlock(blockNum int64) (Block, error) {
 	c.rateLimit.Take()
 
-	resp, err := http.Get("https://api.etherscan.io/api?module=proxy&action=eth_getBlockByNumber&tag=" +
+	resp, err := c.httpGetter.Get("https://api.etherscan.io/api?module=proxy&action=eth_getBlockByNumber&tag=" +
 		fmt.Sprintf("0x%x", blockNum) + "&boolean=false&apikey=" + c.apiKey)
 	if err != nil {
 		return Block{}, err
@@ -159,7 +166,7 @@ func (b *block) toBlock() (Block, error) {
 func (c *Client) GetTransaction(hash string) (Transaction, error) {
 	c.rateLimit.Take()
 
-	resp, err := http.Get("https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=" +
+	resp, err := c.httpGetter.Get("https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=" +
 		hash + "&apikey=" + c.apiKey)
 	if err != nil {
 		return Transaction{}, err
