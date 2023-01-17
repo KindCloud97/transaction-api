@@ -11,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const numOldBlocks = 100
+const numOldBlocks = 1000
 
 type Updater struct {
 	client etherscan.Client
