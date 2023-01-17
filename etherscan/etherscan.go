@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rs/zerolog/log"
 	"go.uber.org/ratelimit"
 )
 
@@ -150,8 +149,6 @@ func (b *block) toBlock() (Block, error) {
 		return Block{}, err
 	}
 
-	log.Debug().Int64("block id", num).Msg("fetching and saving all transactions in the block")
-
 	return Block{
 		Number:       num,
 		Timestamp:    b.Result.Timestamp,
@@ -188,7 +185,7 @@ func (c *Client) GetTransaction(hash string) (Transaction, error) {
 	if err != nil {
 		return Transaction{}, err
 	}
-	log.Debug().Str("transaction id:", t.Result.Hash)
+
 	return t.toTransaction()
 }
 

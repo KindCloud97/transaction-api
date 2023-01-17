@@ -3,10 +3,12 @@ package updater
 import (
 	"context"
 	"fmt"
-	"github.com/KindCloud97/transactionapi/etherscan"
-	"github.com/KindCloud97/transactionapi/store"
 	"strings"
 	"time"
+
+	"github.com/KindCloud97/transactionapi/etherscan"
+	"github.com/KindCloud97/transactionapi/store"
+	"github.com/rs/zerolog/log"
 )
 
 const numOldBlocks = 100
@@ -40,6 +42,8 @@ func (s *Updater) loadMissingTransactions(lastBlockDB int64,
 }
 
 func (s *Updater) fetchAndSaveTransactionsInBlock(blockNum int64) error {
+	log.Debug().Int64("block id", blockNum).Msg("fetching and saving all transactions in the block")
+
 	block, err := s.client.GetBlock(blockNum)
 	if err != nil {
 		return err
@@ -56,6 +60,8 @@ func (s *Updater) fetchAndSaveTransactionsInBlock(blockNum int64) error {
 		if err != nil {
 			return fmt.Errorf("api transaction to db transaction: %w", err)
 		}
+
+		log.Debug().Str("transaction id:", trId).Send()
 	}
 
 	return nil
