@@ -96,8 +96,9 @@ func apiTransToDBTrans(
 	t etherscan.Transaction) store.Transaction {
 	return store.Transaction{
 		Id:        t.Hash,
-		To:        t.To,
+		From:      t.From,
 		BlockId:   b.Number,
+		To:        t.To,
 		Timestamp: b.Timestamp,
 		Value:     t.Value,
 		Gas:       t.GasPrice,

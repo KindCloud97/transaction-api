@@ -12,10 +12,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//go:generate mockery --name Storer --with-expecter
+type Storer interface {
+	FindPage(tran Transaction, pageNum, pageSize int) ([]Transaction, error)
+	GetLastBlock() (int64, error)
+	InsertOne(ctx context.Context, t Transaction) error
+}
+
 type Transaction struct {
 	Id        string `bson:"id,omitempty"`
-	To        string `bson:"from,omitempty"`
+	From      string `bson:"from,omitempty"`
 	BlockId   int64  `bson:"block_id,omitempty"`
+	To        string `bson:"from,omitempty"`
 	Timestamp string `bson:"timestamp,omitempty"`
 	Value     string `bson:"value,omitempty"`
 	Gas       string `bson:"gas,omitempty"`
