@@ -46,4 +46,4 @@ message Transaction {
 }
 ```
 
-##### The API deployed on Fly.io you can try it on <transactionapi.fly.dev:443>
+##### The API deployed on Fly.io you can try it on <https://transactionapi.fly.dev:443>
