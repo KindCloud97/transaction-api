@@ -13,12 +13,13 @@ Use `GetTransactionsRequest` object to filtering through all transactions in dat
 ```protobuf
 message GetTransactionsRequest {
   string id = 1;
-  string to = 2;
+  string from = 2;
   int64 block_id = 3;
-  string timestamp = 4;
-  string value = 5;
-  string gas = 6;
-  PageRequest page = 7;
+  string to = 4;
+  string timestamp = 5;
+  string value = 6;
+  string gas = 7;
+  PageRequest page = 8;
 }
 ```
 The API supports paging, to use it you can pass `PageRequest` with `size`(page size) and `num`(page number).
@@ -38,11 +39,12 @@ message GetTransactionsResponse {
 ```protobuf
 message Transaction {
   string id = 1;
-  string to = 2;
+  string from = 2;
   int64 block_id = 3;
-  string timestamp = 4;
-  string value = 5;
-  string gas = 6;
+  string to = 4;
+  string timestamp = 5;
+  string value = 6;
+  string gas = 7;
 }
 ```
 
