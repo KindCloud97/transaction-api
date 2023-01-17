@@ -3,9 +3,10 @@ package server
 import (
 	"context"
 	"fmt"
+	"math/big"
+
 	"github.com/KindCloud97/transactionapi/gen/proto/transactionapi"
 	"github.com/KindCloud97/transactionapi/store"
-	"math/big"
 
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -16,12 +17,12 @@ var _ transactionapi.TransactionServiceServer = (*Server)(nil)
 
 type Server struct {
 	transactionapi.UnimplementedTransactionServiceServer
-	mongo *store.Mongo
+	storer store.Storer
 }
 
-func New(mongo *store.Mongo) *Server {
+func New(storer store.Storer) *Server {
 	return &Server{
-		mongo: mongo,
+		storer: storer,
 	}
 }
 
@@ -39,10 +40,11 @@ func (s *Server) GetTransactions(ctx context.Context,
 		return nil, status.Error(codes.InvalidArgument, "incorrect page size")
 	}
 
-	trans, err := s.mongo.FindPage(store.Transaction{
+	trans, err := s.storer.FindPage(store.Transaction{
 		Id:        r.Id,
-		To:        r.To,
+		From:      r.From,
 		BlockId:   r.BlockId,
+		To:        r.To,
 		Timestamp: r.Timestamp,
 		Value:     r.Value,
 		Gas:       r.Gas,
@@ -73,8 +75,9 @@ func convertTransactions(pages []store.Transaction) ([]*transactionapi.Transacti
 
 		transactions = append(transactions, &transactionapi.Transaction{
 			Id:        trans.Id,
-			To:        trans.To,
+			From:      trans.From,
 			BlockId:   trans.BlockId,
+			To:        trans.To,
 			Timestamp: trans.Timestamp,
 			Value:     value,
 			Gas:       trans.Gas,
