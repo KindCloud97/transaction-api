@@ -66,8 +66,8 @@ type Error struct {
 	Result  string `json:"result,omitempty"`
 }
 
-func New(apikey string, httpGetter HttpGetter) Client {
-	return Client{
+func New(apikey string, httpGetter HttpGetter) *Client {
+	return &Client{
 		apiKey:     apikey,
 		rateLimit:  ratelimit.New(4, ratelimit.WithoutSlack),
 		httpGetter: httpGetter,
